@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Fluffy Bird – Fly With Your Own Photo! Transform your selfies and pet photos into cute flying birds in this responsive Flappy Bird game.">
+  <title>Fluffy Bird 🐦 – Fly With Your Own Photo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Grandstander:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- App Container -->
+  <div id="app" class="app-container">
+
+    <!-- Top Universal Navigation / Status Bar -->
+    <header class="top-nav">
+      <div class="brand">
+        <span class="brand-icon">🐦</span>
+        <span class="brand-title">Fluffy Bird</span>
+      </div>
+      <div class="top-stats">
+        <div class="stat-badge coin-badge" id="topCoinBadge" title="Your Coins">
+          <span class="coin-icon">🪙</span>
+          <span id="playerCoins">0</span>
+        </div>
+        <button id="btnDailyRewardTop" class="icon-btn pulse-reward" title="Daily Reward">
+          🎁<span class="reward-dot" id="rewardDot"></span>
+        </button>
+        <button id="btnMuteBgmTop" class="icon-btn" title="Toggle Music">🎵</button>
+        <button id="btnMuteSfxTop" class="icon-btn" title="Toggle Sound FX">🔊</button>
+      </div>
+    </header>
+
+    <!-- Main Screens Wrapper -->
+    <main class="game-viewport-container">
+
+      <!-- ================= SCREEN 1: HOME / TITLE SCREEN ================= -->
+      <section id="screenHome" class="game-screen active">
+        <div class="home-decorations">
+          <div class="cloud cloud-1"></div>
+          <div class="cloud cloud-2"></div>
+          <div class="sun"></div>
+        </div>
+
+        <div class="home-hero">
+          <h1 class="game-logo">
+            <span class="logo-word-1">FLUFFY</span>
+            <span class="logo-word-2">BIRD</span>
+            <span class="logo-badge">Fly With Your Own Photo!</span>
+          </h1>
+
+          <!-- Current Active Bird Preview Card -->
+          <div class="active-bird-display" id="homeBirdDisplay">
+            <div class="bird-preview-bubble">
+              <canvas id="homeBirdCanvas" width="160" height="160"></canvas>
+            </div>
+            <div class="bird-info">
+              <span class="flying-as">Playing As:</span>
+              <h2 id="homeBirdName" class="bird-title">Sunny Pip</h2>
+              <button id="btnQuickEditBird" class="chip-btn">✏️ Edit Bird</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode Selection Chips -->
+        <div class="mode-selector-wrap">
+          <label class="section-label">Select Game Mode:</label>
+          <div class="mode-pill-grid">
+            <button class="mode-pill active" data-mode="classic">
+              <span class="mode-icon">🏆</span>
+              <span class="mode-name">Classic</span>
+              <span class="mode-desc">Standard Flappy</span>
+            </button>
+            <button class="mode-pill" data-mode="endless">
+              <span class="mode-icon">🌱</span>
+              <span class="mode-name">Endless</span>
+              <span class="mode-desc">Relaxed Gaps</span>
+            </button>
+            <button class="mode-pill" data-mode="challenge">
+              <span class="mode-icon">⚡</span>
+              <span class="mode-name">Challenge</span>
+              <span class="mode-desc">Moving Pipes & 2x 🪙</span>
+            </button>
+            <button class="mode-pill" data-mode="relax">
+              <span class="mode-icon">🎈</span>
+              <span class="mode-name">Relax</span>
+              <span class="mode-desc">No Death, Bounce!</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Primary Action Buttons -->
+        <div class="home-actions">
+          <button id="btnPlayGame" class="btn btn-primary btn-play">
+            <span class="btn-icon">🚀</span>
+            <span class="btn-text">PLAY NOW</span>
+          </button>
+          <button id="btnOpenWorkshop" class="btn btn-secondary">
+            <span class="btn-icon">🎨</span>
+            <span>Create / Edit Bird</span>
+          </button>
+          <div class="action-sub-grid">
+            <button id="btnOpenGallery" class="btn btn-ghost">
+              <span class="btn-icon">🐥</span>
+              <span>Bird Roster</span>
+            </button>
+            <button id="btnOpenShop" class="btn btn-ghost">
+              <span class="btn-icon">🛍️</span>
+              <span>Accessories</span>
+            </button>
+            <button id="btnOpenAchievements" class="btn btn-ghost">
+              <span class="btn-icon">🎖️</span>
+              <span>Badges</span>
+            </button>
+            <button id="btnOpenLeaderboard" class="btn btn-ghost">
+              <span class="btn-icon">🏅</span>
+              <span>Scores</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Bottom Quick Tips -->
+        <div class="home-footer-tips">
+          <span>💡 Tap, click, or hit <b>Spacebar</b> to fly! Add your face for maximum fun!</span>
+        </div>
+      </section>
+
+
+      <!-- ================= SCREEN 2: GAMEPLAY SCREEN ================= -->
+      <section id="screenGame" class="game-screen">
+        <!-- Main Game Canvas -->
+        <div class="canvas-wrapper" id="canvasWrapper">
+          <canvas id="gameCanvas" width="420" height="640"></canvas>
+
+          <!-- In-Game HUD -->
+          <div id="gameHud" class="game-hud">
+            <div class="hud-top">
+              <div class="hud-mode-tag" id="hudModeTag">Classic</div>
+              <div class="hud-score-display">
+                <span id="hudScore">0</span>
+              </div>
+              <div class="hud-coins-display">
+                🪙 <span id="hudCoins">0</span>
+              </div>
+              <button id="btnPauseGame" class="hud-pause-btn" title="Pause Game">⏸️</button>
+            </div>
+            <div class="hud-multiplier" id="hudMultiplier" style="display: none;">2x COINS</div>
+          </div>
+
+          <!-- Get Ready / Tap To Fly Prompt Overlay -->
+          <div id="readyOverlay" class="game-inner-overlay ready-overlay">
+            <div class="ready-content">
+              <div class="tap-hand-anim">👆</div>
+              <h2>GET READY!</h2>
+              <p>Tap, Click or press <b>SPACE</b> to Flap</p>
+              <div class="ready-bird-tag" id="readyBirdTag">Flying as Sunny Pip</div>
+            </div>
+          </div>
+
+          <!-- Paused Overlay -->
+          <div id="pauseOverlay" class="game-inner-overlay pause-overlay" style="display: none;">
+            <div class="pause-card">
+              <h2>GAME PAUSED</h2>
+              <div class="pause-actions">
+                <button id="btnResumeGame" class="btn btn-primary">▶️ Resume</button>
+                <button id="btnRestartGame" class="btn btn-secondary">🔄 Restart</button>
+                <button id="btnQuitToHome" class="btn btn-ghost">🏠 Main Menu</button>
+              </div>
+              <div class="pause-settings">
+                <label>
+                  <span>Music:</span>
+                  <input type="checkbox" id="chkPauseBgm" checked>
+                </label>
+                <label>
+                  <span>Sound FX:</span>
+                  <input type="checkbox" id="chkPauseSfx" checked>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Game Over Overlay -->
+          <div id="gameOverOverlay" class="game-inner-overlay game-over-overlay" style="display: none;">
+            <div class="game-over-card">
+              <div class="game-over-banner" id="gameOverBanner">GAME OVER</div>
+
+              <div class="game-over-avatar">
+                <canvas id="gameOverBirdCanvas" width="100" height="100"></canvas>
+              </div>
+
+              <div class="score-summary-grid">
+                <div class="summary-box">
+                  <span class="summary-label">SCORE</span>
+                  <span class="summary-val" id="goFinalScore">0</span>
+                </div>
+                <div class="summary-box highlight">
+                  <span class="summary-label">BEST</span>
+                  <span class="summary-val" id="goBestScore">0</span>
+                  <span class="new-record-badge" id="goNewRecordBadge" style="display: none;">NEW BEST! 🎉</span>
+                </div>
+              </div>
+
+              <div class="coins-earned-row">
+                <span>Coins Collected:</span>
+                <span class="coins-collected-val">+<span id="goCoinsEarned">0</span> 🪙</span>
+              </div>
+
+              <!-- Medal / Trophy Display -->
+              <div class="medal-award" id="goMedalAward">
+                <span class="medal-icon" id="goMedalIcon">🥉</span>
+                <span class="medal-text" id="goMedalText">Bronze Flapper</span>
+              </div>
+
+              <div class="game-over-actions">
+                <button id="btnPlayAgain" class="btn btn-primary btn-bounce">
+                  <span>🔄</span> Play Again
+                </button>
+                <button id="btnChangeBirdGo" class="btn btn-secondary">
+                  <span>🐥</span> Choose Bird
+                </button>
+                <button id="btnHomeFromGo" class="btn btn-ghost">
+                  <span>🏠</span> Main Menu
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- ================= SCREEN 3: BIRD WORKSHOP (PHOTO & CUSTOMIZER) ================= -->
+      <section id="screenWorkshop" class="game-screen modal-like-screen">
+        <div class="screen-header">
+          <button class="nav-back-btn" id="btnBackFromWorkshop" title="Back">⬅️</button>
+          <h2 class="screen-title" id="workshopTitle">Bird Workshop 🎨</h2>
+          <div class="header-dummy"></div>
+        </div>
+
+        <div class="workshop-scroll-content">
+          <!-- Workshop Navigation Tabs -->
+          <div class="workshop-tabs">
+            <button class="tab-btn active" data-tab="tabPhoto">📸 1. Photo & Face</button>
+            <button class="tab-btn" data-tab="tabPlumage">🪶 2. Plumage & Gear</button>
+            <button class="tab-btn" data-tab="tabVoice">🎙️ 3. Custom Voice</button>
+          </div>
+
+          <!-- TAB 1: Photo & Face Cropping -->
+          <div id="tabPhoto" class="tab-pane active">
+            <div class="workshop-section-intro">
+              <p>Upload any selfie, friend photo, or pet photo! Your face becomes the actual flying bird body.</p>
+            </div>
+
+            <!-- Upload Area & Quick Presets -->
+            <div class="upload-controls-row">
+              <label class="btn btn-primary upload-btn-label">
+                <span>📷 Upload Photo</span>
+                <input type="file" id="photoFileInput" accept="image/jpeg,image/png,image/webp,image/jpg" hidden>
+              </label>
+
+              <div class="preset-dropdown-wrap">
+                <button id="btnPickPreset" class="btn btn-ghost">🐶 Presets 🐱</button>
+                <div class="preset-menu" id="presetMenu" style="display: none;">
+                  <button class="preset-option" data-preset="cat">🐱 Cute Kitty</button>
+                  <button class="preset-option" data-preset="dog">🐶 Happy Doggo</button>
+                  <button class="preset-option" data-preset="hamster">🐹 Chonky Hamster</button>
+                  <button class="preset-option" data-preset="chick">🐣 Baby Chick</button>
+                  <button class="preset-option" data-preset="panda">🐼 Silly Panda</button>
+                </div>
+              </div>
+
+              <button id="btnRemovePhoto" class="btn btn-ghost text-danger" title="Reset to Default">🗑️ Reset</button>
+            </div>
+
+            <!-- Interactive Cropping Box -->
+            <div class="crop-editor-wrapper">
+              <div class="crop-container" id="cropContainer">
+                <canvas id="cropCanvas" width="300" height="300"></canvas>
+                <div class="crop-overlay-guide">
+                  <div class="crop-circle-mask"></div>
+                  <div class="crop-face-pointer">Face Area</div>
+                </div>
+              </div>
+              <div class="crop-drag-hint">👆 Drag image to position &bull; Use slider or scroll wheel to zoom</div>
+
+              <!-- Zoom & Pan Controls -->
+              <div class="crop-sliders">
+                <div class="slider-group">
+                  <label for="cropZoomSlider">🔍 Zoom:</label>
+                  <input type="range" id="cropZoomSlider" min="0.4" max="3.0" step="0.05" value="1.0">
+                  <span id="zoomValDisplay">1.0x</span>
+                </div>
+                <div class="slider-group">
+                  <label for="cropRotateSlider">🔄 Rotate:</label>
+                  <input type="range" id="cropRotateSlider" min="-180" max="180" step="2" value="0">
+                  <span id="rotateValDisplay">0°</span>
+                </div>
+                <button id="btnCenterCrop" class="btn btn-micro">🎯 Recenter</button>
+              </div>
+            </div>
+
+            <!-- Bird Identity Info -->
+            <div class="identity-group">
+              <label for="birdNameInput">Bird Character Name:</label>
+              <input type="text" id="birdNameInput" maxlength="24" placeholder="e.g. Fluffy Max, Queen Penny..." value="Sunny Pip">
+            </div>
+          </div>
+
+          <!-- TAB 2: Plumage, Wings & Accessories -->
+          <div id="tabPlumage" class="tab-pane">
+            <!-- Feather / Plumage Color Palette -->
+            <div class="customizer-group">
+              <label class="group-label">Body & Fluff Feather Color:</label>
+              <div class="color-palette-grid" id="plumageColorGrid">
+                <!-- Color options injected via JS -->
+              </div>
+            </div>
+
+            <!-- Wing Color Palette -->
+            <div class="customizer-group">
+              <label class="group-label">Fluffy Wing Color:</label>
+              <div class="color-palette-grid" id="wingColorGrid">
+                <!-- Wing color options injected via JS -->
+              </div>
+            </div>
+
+            <!-- Beak Style / Color -->
+            <div class="customizer-group">
+              <label class="group-label">Beak Color:</label>
+              <div class="color-palette-grid" id="beakColorGrid">
+                <!-- Beak colors injected via JS -->
+              </div>
+            </div>
+
+            <!-- Cute Cheeks / Blush -->
+            <div class="customizer-group toggle-row">
+              <label for="chkRosyCheeks" class="toggle-label">
+                <span>🌸 Add Rosy Cheeks Blush</span>
+              </label>
+              <input type="checkbox" id="chkRosyCheeks" checked>
+            </div>
+
+            <!-- Accessory Picker -->
+            <div class="customizer-group">
+              <label class="group-label">Equipped Accessory:</label>
+              <div class="accessory-selector-grid" id="workshopAccessoryGrid">
+                <!-- Populated dynamically from unlocked accessories -->
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: Custom Voice Recording -->
+          <div id="tabVoice" class="tab-pane">
+            <div class="workshop-section-intro">
+              <p>Record your own voice using your microphone or upload audio files! Each action in the game can speak with your custom sound.</p>
+            </div>
+
+            <div class="voice-slots-list">
+
+              <!-- Slot 1: Flap / Jump -->
+              <div class="voice-slot-card" data-event="flap">
+                <div class="voice-slot-info">
+                  <div class="voice-event-title">
+                    <span class="event-icon">🪽</span>
+                    <strong>Flap / Jump Voice</strong>
+                  </div>
+                  <div class="voice-status" id="voiceStatus_flap">Using: Built-in Chirp</div>
+                </div>
+                <div class="voice-slot-actions">
+                  <button class="btn btn-micro btn-record" data-event="flap">🎙️ Record</button>
+                  <label class="btn btn-micro btn-upload-audio">
+                    📁 Upload
+                    <input type="file" accept="audio/*" class="audio-file-input" data-event="flap" hidden>
+                  </label>
+                  <button class="btn btn-micro btn-preview-audio" data-event="flap" title="Preview Sound">▶️ Test</button>
+                  <button class="btn btn-micro btn-clear-audio" data-event="flap" title="Reset to Default">🗑️</button>
+                </div>
+              </div>
+
+              <!-- Slot 2: Score / Pass Pipe -->
+              <div class="voice-slot-card" data-event="score">
+                <div class="voice-slot-info">
+                  <div class="voice-event-title">
+                    <span class="event-icon">⭐</span>
+                    <strong>Score / Clear Pipe</strong>
+                  </div>
+                  <div class="voice-status" id="voiceStatus_score">Using: Built-in Chime</div>
+                </div>
+                <div class="voice-slot-actions">
+                  <button class="btn btn-micro btn-record" data-event="score">🎙️ Record</button>
+                  <label class="btn btn-micro btn-upload-audio">
+                    📁 Upload
+                    <input type="file" accept="audio/*" class="audio-file-input" data-event="score" hidden>
+                  </label>
+                  <button class="btn btn-micro btn-preview-audio" data-event="score" title="Preview Sound">▶️ Test</button>
+                  <button class="btn btn-micro btn-clear-audio" data-event="score" title="Reset to Default">🗑️</button>
+                </div>
+              </div>
+
+              <!-- Slot 3: Crash / Collision -->
+              <div class="voice-slot-card" data-event="crash">
+                <div class="voice-slot-info">
+                  <div class="voice-event-title">
+                    <span class="event-icon">💥</span>
+                    <strong>Crash / Collision</strong>
+                  </div>
+                  <div class="voice-status" id="voiceStatus_crash">Using: Built-in Bonk</div>
+                </div>
+                <div class="voice-slot-actions">
+                  <button class="btn btn-micro btn-record" data-event="crash">🎙️ Record</button>
+                  <label class="btn btn-micro btn-upload-audio">
+                    📁 Upload
+                    <input type="file" accept="audio/*" class="audio-file-input" data-event="crash" hidden>
+                  </label>
+                  <button class="btn btn-micro btn-preview-audio" data-event="crash" title="Preview Sound">▶️ Test</button>
+                  <button class="btn btn-micro btn-clear-audio" data-event="crash" title="Reset to Default">🗑️</button>
+                </div>
+              </div>
+
+              <!-- Slot 4: Game Start -->
+              <div class="voice-slot-card" data-event="start">
+                <div class="voice-slot-info">
+                  <div class="voice-event-title">
+                    <span class="event-icon">🚀</span>
+                    <strong>Game Start / Takeoff</strong>
+                  </div>
+                  <div class="voice-status" id="voiceStatus_start">Using: Built-in Fanfare</div>
+                </div>
+                <div class="voice-slot-actions">
+                  <button class="btn btn-micro btn-record" data-event="start">🎙️ Record</button>
+                  <label class="btn btn-micro btn-upload-audio">
+                    📁 Upload
+                    <input type="file" accept="audio/*" class="audio-file-input" data-event="start" hidden>
+                  </label>
+                  <button class="btn btn-micro btn-preview-audio" data-event="start" title="Preview Sound">▶️ Test</button>
+                  <button class="btn btn-micro btn-clear-audio" data-event="start" title="Reset to Default">🗑️</button>
+                </div>
+              </div>
+
+              <!-- Slot 5: Game Over -->
+              <div class="voice-slot-card" data-event="gameover">
+                <div class="voice-slot-info">
+                  <div class="voice-event-title">
+                    <span class="event-icon">😢</span>
+                    <strong>Game Over / Wah Wah</strong>
+                  </div>
+                  <div class="voice-status" id="voiceStatus_gameover">Using: Built-in Trombone</div>
+                </div>
+                <div class="voice-slot-actions">
+                  <button class="btn btn-micro btn-record" data-event="gameover">🎙️ Record</button>
+                  <label class="btn btn-micro btn-upload-audio">
+                    📁 Upload
+                    <input type="file" accept="audio/*" class="audio-file-input" data-event="gameover" hidden>
+                  </label>
+                  <button class="btn btn-micro btn-preview-audio" data-event="gameover" title="Preview Sound">▶️ Test</button>
+                  <button class="btn btn-micro btn-clear-audio" data-event="gameover" title="Reset to Default">🗑️</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Active Recording Dialog Indicator -->
+            <div id="recordingModal" class="recording-modal" style="display: none;">
+              <div class="recording-box">
+                <div class="rec-pulse-circle">🔴</div>
+                <h3 id="recPromptTitle">Recording Voice...</h3>
+                <p id="recEventDesc">Speak clearly into your mic!</p>
+                <div class="rec-timer" id="recTimerDisplay">00:02</div>
+                <button id="btnStopRecording" class="btn btn-primary btn-stop-rec">⏹️ Stop & Save</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Animated Bird Preview in Workshop -->
+          <div class="workshop-live-preview">
+            <div class="live-preview-title">Bird Flying Preview:</div>
+            <div class="live-preview-stage">
+              <canvas id="workshopBirdCanvas" width="180" height="180"></canvas>
+            </div>
+            <div class="live-preview-actions">
+              <button id="btnWorkshopFlapTest" class="btn btn-ghost btn-sm">🪽 Test Flap</button>
+            </div>
+          </div>
+
+          <!-- Save / Cancel Action Bar -->
+          <div class="workshop-footer">
+            <button id="btnSaveBird" class="btn btn-primary btn-save">💾 Save Bird Character</button>
+            <button id="btnCancelWorkshop" class="btn btn-ghost">Cancel</button>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= SCREEN 4: CHARACTER ROSTER / GALLERY ================= -->
+      <section id="screenGallery" class="game-screen modal-like-screen">
+        <div class="screen-header">
+          <button class="nav-back-btn" id="btnBackFromGallery">⬅️</button>
+          <h2 class="screen-title">Bird Flock Gallery 🐥</h2>
+          <button id="btnCreateNewFromGallery" class="btn btn-primary btn-sm">➕ New Bird</button>
+        </div>
+
+        <div class="gallery-scroll-content">
+          <p class="gallery-subtitle">Choose which fluffy character to fly with, or build a flock of friends and pets!</p>
+
+          <div class="bird-roster-grid" id="birdRosterGrid">
+            <!-- Roster cards injected via JS -->
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= SCREEN 5: REWARDS SHOP / WARDROBE ================= -->
+      <section id="screenShop" class="game-screen modal-like-screen">
+        <div class="screen-header">
+          <button class="nav-back-btn" id="btnBackFromShop">⬅️</button>
+          <h2 class="screen-title">Fluffy Wardrobe & Shop 🛍️</h2>
+          <div class="shop-coin-counter">
+            🪙 <span id="shopCoinsDisplay">0</span>
+          </div>
+        </div>
+
+        <div class="shop-scroll-content">
+          <div class="shop-tabs">
+            <button class="shop-tab-btn active" data-shoptab="hats">👑 Hats & Crowns</button>
+            <button class="shop-tab-btn" data-shoptab="glasses">👓 Eyewear</button>
+            <button class="shop-tab-btn" data-shoptab="special">✨ Capes & Auras</button>
+          </div>
+
+          <div class="shop-items-grid" id="shopItemsGrid">
+            <!-- Shop items injected via JS -->
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= SCREEN 6: ACHIEVEMENTS & DAILY REWARD ================= -->
+      <section id="screenAchievements" class="game-screen modal-like-screen">
+        <div class="screen-header">
+          <button class="nav-back-btn" id="btnBackFromAchievements">⬅️</button>
+          <h2 class="screen-title">Badges & Rewards 🎖️</h2>
+          <div class="header-dummy"></div>
+        </div>
+
+        <div class="achievements-scroll-content">
+          <!-- Daily Reward Calendar Section -->
+          <div class="daily-reward-card">
+            <div class="daily-card-header">
+              <span class="gift-icon">🎁</span>
+              <div>
+                <h3>Daily Flight Bonus</h3>
+                <p>Check in every day for free coins and exclusive rewards!</p>
+              </div>
+            </div>
+            <div class="daily-streak-track" id="dailyStreakTrack">
+              <!-- 7 Days icons injected via JS -->
+            </div>
+            <div class="daily-claim-wrap">
+              <button id="btnClaimDaily" class="btn btn-primary">🎁 Claim Daily Coins!</button>
+              <div id="dailyCountdown" class="daily-countdown-text">Next bonus in: --:--:--</div>
+            </div>
+          </div>
+
+          <!-- Achievements List -->
+          <div class="achievements-section">
+            <h3>Fluffy Achievements</h3>
+            <div class="achievements-list" id="achievementsList">
+              <!-- Achievements injected via JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= SCREEN 7: HIGH SCORES & LEADERBOARD ================= -->
+      <section id="screenLeaderboard" class="game-screen modal-like-screen">
+        <div class="screen-header">
+          <button class="nav-back-btn" id="btnBackFromLeaderboard">⬅️</button>
+          <h2 class="screen-title">Hall of Fluff 🏅</h2>
+          <div class="header-dummy"></div>
+        </div>
+
+        <div class="leaderboard-scroll-content">
+          <div class="leaderboard-tabs">
+            <button class="lb-tab-btn active" data-lbmode="classic">Classic</button>
+            <button class="lb-tab-btn" data-lbmode="endless">Endless</button>
+            <button class="lb-tab-btn" data-lbmode="challenge">Challenge</button>
+          </div>
+
+          <div class="leaderboard-table-wrap">
+            <table class="lb-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Bird</th>
+                  <th>Name</th>
+                  <th>Best Score</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboardTbody">
+                <!-- Leaderboard rows injected via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="lb-stat-summary" id="lbStatSummary">
+            <!-- Summary stats -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Floating Global Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+  </div>
+
+  <!-- Audio Context & Script Execution -->
+  <script src="script.js"></script>
+</body>
+</html>
